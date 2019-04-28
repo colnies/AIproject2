@@ -9,8 +9,8 @@ user specifies
 	
 	command line: classify <faces, digits> <p, nb> <0 -> 100>
 
-each digit in 20 x 20 matrix
-each face in 70 x 70 matrix
+each digit in 20 x 28 matrix
+each face in 70 x 61 matrix
 
 features will be the pixels themselves
 
@@ -99,6 +99,8 @@ double test(testingSet){
 	}
 	return correctCount / testingSet.length 
 }
+
+perceptron(
 -------------------------------------------------------
 
 
