@@ -1,0 +1,170 @@
+Image Classification Overview
+-----------------------------
+heres some pseudocode for the basic idea behind the project
+
+user specifies
+	-which image set to use (faces or digits)
+	-which classification algorithm to  use 
+	-percent of training data to use 
+	
+	command line: classify <faces, digits> <p, nb> <0 -> 100>
+
+each digit in 20 x 20 matrix
+each face in 70 x 70 matrix
+
+features will be the pixels themselves
+
+some possible globals:
+boolean isFaceSet
+Arraylist<boolean[][]> imageSet
+double percent
+ArrayList<label> labelList
+
+
+
+class label {
+	int id //if we are doing faces (0 = not face, 1 = face). digits will line up perfectly
+	int[][] weightMatrix //used in perceptron
+	int count //used in naive bayes
+	int[][] trueFeatures //used in naive bayes. tracks the frequency of each feature 
+}
+
+perceptron stuff---------------------------------------
+
+//returns the score of the image. the higher the score the more likely
+//it is classified correctly
+int getScore(boolean[][] image, int weightMatrix){
+	int score = 0
+	for (i=0 -> i=image.length){
+		for (j=0 -> j=image[0].length){
+			score += image[i][j] * weightMatrix[i][j]
+		}
+	}
+	return score
+}
+
+//returns the label whose weightMatrix generated the highest score for the image
+label computeLabel(boolean[][] image){
+	max = 0;
+	for each weightMatrix wm
+		score = getScore(image, wm)
+		if score > max	
+			max = score
+			computedLabel = wm.label
+	return computedLabel
+}
+
+//if the computed label was incorect, the weightMatrix is updated for that label
+boolean updateWeightMatricies(boolean[][] image, label computedLabel){
+	if (computedLabel == actual label of image)
+		return false
+	wm = weightMatrix corresponding to computedLabel
+	for (i=0 -> i=image.length){
+		for (j=0 -> j=image[0].length){
+			wm[i][j] += image[i][j]
+		}
+	}
+	for each weightMatrix wm
+		for (i=0 -> i=image.length){
+			for (j=0 -> j=image[0].length){
+				wm[i][j] -= image[i][j]
+			}
+		}
+	}
+	return true
+}
+
+//iterates through all the training data constantly updating the weightMatrix for 
+//each label until they are no longer updated or 2 minutes has passed. returns the 
+//amount of time passed
+time train(trainingSet, percent){
+	subSet = getSubSet(percent)
+	hasUpdated = true
+	while (time passed < 2 minutes || !hasUpdate)}{
+		hasUpdated = false
+		for each image i in subSet {
+			if (updateWeightMatricies(i, computeLabel(i) == true)
+				hasUpdated = true
+		}
+	}
+	return time passed
+} 
+
+//returns the accuracy over all the testImages
+double test(testingSet){
+	correctCount
+	for each image i in testingset	
+		if (computeLabel(i) == i.label)
+			correctCount++
+	}
+	return correctCount / testingSet.length 
+}
+-------------------------------------------------------
+
+
+Naive Bayes stuff--------------------------------------
+the equation we need to code is 
+	
+	argmax[y](log(P(y| f1, ..., fm))) = argmax[y]( log(P(y) + summation[i=1->m](log(P(fi|y)))
+	
+	where y can be any label
+	and argmax[y] the max value for every y value
+	and f1,...,fm is the feature vector (I use a feature matrix but its the same idea)
+
+//populates the trueFeatures matrix for each label. The 
+//trueFeatures matrix keeps track of how many times each
+//feature is true for a given label
+initialize(){
+
+	for each image im in trainingSet
+		currentLabel = labelList.get(im.label)
+		currentLabel.count++
+		for(i=0 -> im.length)
+			for(j=0 -> im[0].length)
+				if (im[i][j] == true)
+					currentLabel.trueFeatures[i][j] += 1
+}
+
+//this is P(y) in the equation
+priorDistribution(label l){
+	return l.count/imageSet.size()
+}
+
+//returns how many times the feature at i,j = value for every
+//image labeled l in the training data
+getFeatureCount(int i, int j, boolean value, label l){
+	if (value == true)
+		return l.trueFeatures[i][j]
+	else
+		return l.count - trueFeatures[i][j]
+
+//this is P(fi|y). returns how many times feature i,j = value over all images with
+//label l in training data divided by total number of images labeled l in training data
+probOfFeature(int i, int j, boolean value, label l, int k){
+	return (getFeatureCount(i, j, value, l) + k) / (l.count + 2k)
+}
+
+//this is log(P(y) + summation[i=1->m](log(P(fi|y)). The probability
+//this label l corresponds to image im
+int probOfLabel(label l, image im){
+	result = log( priorDistribution(l) )
+	for(i=0 -> im.length)
+		for(j=0 -> im[0].length)
+			result += log (probOfFeature(i, j, im[i][j], l))
+	return result
+}
+
+//this is the entire equation. Iterates over all possible labels and returns
+//the one which results in the highest probability
+label naiveBayesClassification(image im){
+	max = 0
+	mostLikelyLabel = labelList[0]
+	for each label l
+		prob = probOfLabel(l, im)
+		if (prob > max)
+			mostLikelyLabel = l
+			max = prob
+	return mostLikelyLabel
+}
+------------------------------------------------------	
+	
