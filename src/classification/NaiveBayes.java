@@ -2,10 +2,35 @@ package classification;
 
 import java.util.ArrayList;
 
+/**
+ * A naiveBayes object can classify images given a training set. It uses the following
+ * equation to determine the most likely label for a particular image. 
+ * 
+ * argmax[y](log(P(y| f1, ..., fm))) = argmax[y]( log(P(y) + summation[i=1->m](log(P(fi|y)))
+ * 
+ * where y can be any label
+ * and argmax[y] is the max value over every y value
+ * and f1,...,fm is the feature vector (I use a feature matrix but its the same idea)
+ * @author Eric Zimerman
+ *
+ */
 public class NaiveBayes {
+	/**
+	 * the set of training images. From these images the machine can have an idea what
+	 * an image of each label looks like
+	 */
 	ArrayList<Image> trainingSet;
+	/**
+	 * the set of testing images. The machine will attempt to classify these images
+	 */
 	ArrayList<Image> testingSet;
+	/**
+	 * the small set of labelData objects corresponding to each label. If we are 
+	 * testing faces it will have data for labels 1 and 0. if we are testing
+	 * digits it will have data for labels 0 -> 9
+	 */
 	ArrayList<LabelData> allLabels;
+	
 	
 	public NaiveBayes(ArrayList<Image> trainingSet, ArrayList<Image> testingSet ){
 		this.trainingSet = trainingSet;
@@ -18,6 +43,12 @@ public class NaiveBayes {
 		this(Image.getTrainingImages(isFaceType, percent), Image.getTestingImages(isFaceType));
 	}
 	
+	/**
+	 * this pretty much "trains" the machine on the training set. It populates the
+	 * true features matrix for every label. Every time a pixel[i][j] is true
+	 * trueFeatures[i][j] is incremented by 1. It will process every picture
+	 * in the training set
+	 */
 	private void initialize(){
 		for (Image image: trainingSet){
 			LabelData currentLabel;
@@ -41,14 +72,33 @@ public class NaiveBayes {
 		}
 	}
 	
+	/**
+	 * easy way to get particular LabelData with just the int label.
+	 * @param label whose data you want
+	 * @return the data corresponding to the label
+	 */
 	private LabelData getLabelData(int label){
 		return allLabels.get(allLabels.indexOf( new LabelData(label) ));
 	}
 	
+	/**
+	 * returns the percentage of images labeled with labelData.label from the
+	 * training set. This is P(y) in the equation
+	 * @param labelData
+	 * @return
+	 */
 	public double priorDistribution(LabelData labelData){
 		return (double)labelData.count / (double)trainingSet.size();
 	}
 	
+	/**
+	 * 
+	 * @param i row corresponding to pixel matrix
+	 * @param j column corresponding to pixel matrix
+	 * @param value of pixel at i,j
+	 * @param ld labelData of the label we are interested in
+	 * @return how many times the pixel at i,j equals value for label ld.label
+	 */
 	public int getFeatureCount(int i, int j, boolean value, LabelData ld){
 		if (value == true){
 			return ld.trueFeatures[i][j];
@@ -56,11 +106,27 @@ public class NaiveBayes {
 		return ld.count - ld.trueFeatures[i][j];
 	}
 	
+	/**
+	 * 
+	 * @param i row corresponding to pixel matrix
+	 * @param j column corresponding to pixel matrix
+	 * @param value of pixel at i,j
+	 * @param ld labelData of the label we are interested in
+	 * @param k a constant to fine tune the probability
+	 * @return the probability that the pixel at i,j equals value for label ld.label
+	 */
 	public double probOfFeature(int i, int j, boolean value, LabelData ld, int k){
 		return ((double)getFeatureCount(i, j, value, ld) + k) 
 				/ (ld.count + (2 * k));
 	}
 	
+	/**
+	 * 
+	 * @param ld
+	 * @param image
+	 * @param k
+	 * @return
+	 */
 	public double probOfLabel(LabelData ld, Image image, int k){
 		double pd = priorDistribution(ld);
 		double result = Math.log(pd);
