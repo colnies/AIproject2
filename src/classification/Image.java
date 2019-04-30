@@ -253,4 +253,8 @@ public class Image {
 		}
 		System.out.println("\n");
 	}
+	
+	public void printImage(){
+		printImage(this);
+	}
 }
