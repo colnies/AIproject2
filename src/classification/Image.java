@@ -8,9 +8,24 @@ import java.util.Scanner;
 
 public class Image {
 	
+	/**
+	 * the pixels matrix represents the pixels of an image extracted from one of text 
+	 * files in the data folder. Each file has a bunch of ascii art images so a false 
+	 * element indicates there is whitespace at that point in the image. True means that
+	 * some character is there it doesnt matter what character.
+	 */
 	boolean[][] pixels;
+	/**
+	 * the true label of this image. This is used to check against the label that the classification
+	 * algorithms will return
+	 */
 	int label;
 	
+	/**
+	 * creates a new Image object with the given pixels and label
+	 * @param pixels boolean matrix representation of an image
+	 * @param label true label of the image
+	 */
 	public Image(boolean[][] pixels, int label){
 		this.pixels = pixels;
 		this.label = label;
@@ -258,6 +273,9 @@ public class Image {
 		System.out.println("\n");
 	}
 	
+	/**
+	 * prints this image as 1s and 0s instead of true and false
+	 */
 	public void printImage(){
 		printImage(this);
 	}

@@ -37,7 +37,9 @@ boolean matrix and the true label represented as an int.
 Also the weightMatrix exists in the labelData class. Only keep track of as
 many labelData objects as there are labels. So for faces there are only two 
 labelData objects, one for face(1) and one for not-face(0). So obviously for 
-digits you should only have 10 labelData objects for 0 - 9
+digits you should only have 10 labelData objects for 0 - 9. The class slides 
+and the link the prof gave in the assignment description will definetly help 
+you understand the algorithm in case you dont know it already
 ***************************************************************************
 
 //returns the score of the image. the higher the score the more likely
