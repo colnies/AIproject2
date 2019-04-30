@@ -42,32 +42,7 @@ public class Classify {
 			System.out.println(errorMessage);
 			return;
 		}
-		*/
-		/*
-		ArrayList<Image> trainingImages;
-		//trainingImages = getDigitImages(false);
-		trainingImages = Image.getTrainingImages(true, 0.01);
-		System.out.println("BEGIN");
-		for(int i = 0; i < trainingImages.size(); i++){
-			System.out.println(trainingImages.get(i).label);
-			Image.printImage(trainingImages.get(i));
-		}
-		*/
-		NaiveBayes nb = new NaiveBayes(false, .5);
-		/*
-		for(int i = 0; i < nb.trainingSet.size(); i++){
-			System.out.println(nb.trainingSet.get(i).label);
-			Image.printImage(nb.trainingSet.get(i));
-		}
-		for (LabelData ld: nb.allLabels){
-			System.out.println("LABEL: " + ld.label);
-			ld.printTrueFeatures();
-		}
-		*/
-		System.out.println(nb.determineError(1));
 		
-		
-		/*
 		if (splitInputString[1].equalsIgnoreCase("p")){
 			//perceptron(splitInputString[0], Double.parseDouble(splitInputString[2])/100)
 		}
@@ -78,6 +53,10 @@ public class Classify {
 			//use other classification algorithm here
 		}
 		*/
+		
+		NaiveBayes nb = new NaiveBayes(true, 0.5);
+		System.out.println("error: " + nb.determineError(1));
+		
 	}
 
 }

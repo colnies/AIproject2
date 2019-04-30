@@ -21,10 +21,18 @@ public class LabelData {
 	 */
 	int[][] trueFeatures;
 	
+	/**
+	 * creates a new LabelData object. The weightMatrix and trueFeatures fields are not
+	 * initialized.
+	 * @param label
+	 */
 	public LabelData(int label){
 		this.label = label;
 	}
 	
+	/**
+	 * two LabelData objects are equal iff their label fields are equal
+	 */
 	public boolean equals(Object o){
 		if (o instanceof LabelData)
 			return ((LabelData)o).label == this.label;
@@ -32,6 +40,10 @@ public class LabelData {
 			return false;
 	}
 	
+	/**
+	 * prints an integer matrix
+	 * @param matrix a 2D array with constant length and width (there are x rows and y columns)
+	 */
 	public static void printMatrix(int[][] matrix){
 		for(int i = 0; i < matrix.length; i++){
 			for(int j = 0; j < matrix[0].length; j++){
@@ -42,10 +54,16 @@ public class LabelData {
 		System.out.println("\n");
 	}
 	
+	/**
+	 * prints the true features matrix
+	 */
 	public void printTrueFeatures(){
 		printMatrix(trueFeatures);
 	}
 	
+	/**
+	 * prints the weightMatrix
+	 */
 	public void printWeightMatrix(){
 		printMatrix(weightMatrix);
 	}

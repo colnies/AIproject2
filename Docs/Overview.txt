@@ -31,8 +31,17 @@ class label {
 
 perceptron stuff---------------------------------------
 
+**************************************************************************
+***COLIN***image is image.pixels in the actual code. an image object holds the
+boolean matrix and the true label represented as an int.
+Also the weightMatrix exists in the labelData class. Only keep track of as
+many labelData objects as there are labels. So for faces there are only two 
+labelData objects, one for face(1) and one for not-face(0). So obviously for 
+digits you should only have 10 labelData objects for 0 - 9
+***************************************************************************
+
 //returns the score of the image. the higher the score the more likely
-//it is classified correctly
+//it is classified correctly 
 int getScore(boolean[][] image, int weightMatrix){
 	int score = 0
 	for (i=0 -> i=image.length){
@@ -64,7 +73,8 @@ boolean updateWeightMatricies(boolean[][] image, label computedLabel){
 			wm[i][j] += image[i][j]
 		}
 	}
-	for each weightMatrix wm
+	
+	for each other weightMatrix wm
 		for (i=0 -> i=image.length){
 			for (j=0 -> j=image[0].length){
 				wm[i][j] -= image[i][j]
@@ -76,7 +86,7 @@ boolean updateWeightMatricies(boolean[][] image, label computedLabel){
 
 //iterates through all the training data constantly updating the weightMatrix for 
 //each label until they are no longer updated or 2 minutes has passed. returns the 
-//amount of time passed
+//amount of time passed. time passed is used in the report we have to write
 time train(trainingSet, percent){
 	subSet = getSubSet(percent)
 	hasUpdated = true

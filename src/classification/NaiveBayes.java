@@ -31,7 +31,11 @@ public class NaiveBayes {
 	 */
 	ArrayList<LabelData> allLabels;
 	
-	
+	/**
+	 * creates a NaiveBayes object and trains it on the given trainingSet
+	 * @param trainingSet
+	 * @param testingSet
+	 */
 	public NaiveBayes(ArrayList<Image> trainingSet, ArrayList<Image> testingSet ){
 		this.trainingSet = trainingSet;
 		this.testingSet = testingSet;
@@ -39,6 +43,13 @@ public class NaiveBayes {
 		initialize();
 	}
 	
+	/**
+	 * creates a NaiveBayes object and trains it on a percentage of the training set indicated 
+	 * by isFaceType and percent
+	 * @param isFaceType true = working with faces. false = working with digits
+	 * @param percent the percentage of training images you want the machine to "learn" from.
+	 * 0 <= percent <= 1
+	 */
 	public NaiveBayes(boolean isFaceType, double percent){
 		this(Image.getTrainingImages(isFaceType, percent), Image.getTestingImages(isFaceType));
 	}
@@ -77,7 +88,7 @@ public class NaiveBayes {
 	 * @param label whose data you want
 	 * @return the data corresponding to the label
 	 */
-	private LabelData getLabelData(int label){
+	public LabelData getLabelData(int label){
 		return allLabels.get(allLabels.indexOf( new LabelData(label) ));
 	}
 	
@@ -87,7 +98,7 @@ public class NaiveBayes {
 	 * @param labelData
 	 * @return
 	 */
-	public double priorDistribution(LabelData labelData){
+	private double priorDistribution(LabelData labelData){
 		return (double)labelData.count / (double)trainingSet.size();
 	}
 	
@@ -99,7 +110,7 @@ public class NaiveBayes {
 	 * @param ld labelData of the label we are interested in
 	 * @return how many times the pixel at i,j equals value for label ld.label
 	 */
-	public int getFeatureCount(int i, int j, boolean value, LabelData ld){
+	private int getFeatureCount(int i, int j, boolean value, LabelData ld){
 		if (value == true){
 			return ld.trueFeatures[i][j];
 		}
@@ -112,22 +123,24 @@ public class NaiveBayes {
 	 * @param j column corresponding to pixel matrix
 	 * @param value of pixel at i,j
 	 * @param ld labelData of the label we are interested in
-	 * @param k a constant to fine tune the probability
+	 * @param k a constant to fine tune the probability. setting to 1 is a safe bet
 	 * @return the probability that the pixel at i,j equals value for label ld.label
 	 */
-	public double probOfFeature(int i, int j, boolean value, LabelData ld, int k){
+	private double probOfFeature(int i, int j, boolean value, LabelData ld, int k){
 		return ((double)getFeatureCount(i, j, value, ld) + k) 
 				/ (ld.count + (2 * k));
 	}
 	
 	/**
-	 * 
-	 * @param ld
-	 * @param image
-	 * @param k
-	 * @return
+	 * this is log(P(y) + summation[i=1->m](log(P(fi|y)). The probability that
+	 * ld.label corresponds to this image
+	 * @param ld labelData of the label we are interested in
+	 * @param image the image we are trying to classify
+	 * @param k a constant to fine tune the probability of each feature. setting to 1 is a safe 
+	 * bet
+	 * @return the natural log of the probability that this image can be classified as ld.label
 	 */
-	public double probOfLabel(LabelData ld, Image image, int k){
+	private double probOfLabel(LabelData ld, Image image, int k){
 		double pd = priorDistribution(ld);
 		double result = Math.log(pd);
 		for (int i = 0; i < image.pixels.length; i++){
@@ -138,6 +151,14 @@ public class NaiveBayes {
 		return result;
 	}
 	
+	/**
+	 * Determines the probability of each label for this image and chooses the label
+	 * which has the highest probability
+	 * @param image the image we want to classify
+	 * @param k a constant to fine tune the probability of each feature. setting to 1 is a safe 
+	 * bet
+	 * @return the most likely label of this image represented as an int
+	 */
 	public int classify(Image image, int k){
 		double maxProb = Double.NEGATIVE_INFINITY;
 		LabelData mostLikelyLabel = allLabels.get(0);
@@ -151,6 +172,13 @@ public class NaiveBayes {
 		return mostLikelyLabel.label;
 	}
 	
+	/**
+	 * Counts how many times the naive bayes classification fails after testing every image in 
+	 * the testing set then determines the percent error
+	 * @param k a constant to fine tune the probability of each feature. setting to 1 is a safe 
+	 * bet
+	 * @return the percent error of this classification over all test images
+	 */
 	public double determineError(int k){
 		double failCount = 0;
 		for (Image image: testingSet){
@@ -162,6 +190,12 @@ public class NaiveBayes {
 		return failCount / (double)testingSet.size();
 	}
 	
+	/**
+	 * Prints out test images, their true labels and the classified labels
+	 * @param k a constant to fine tune the probability of each feature. setting to 1 is a safe 
+	 * bet 
+	 * @param numOfTestImages number of images from the testing set to print out
+	 */
 	public void demonstrate(int k, int numOfTestImages){
 		if (numOfTestImages > testingSet.size()){
 			numOfTestImages = testingSet.size() - 1;
@@ -171,8 +205,8 @@ public class NaiveBayes {
 			Image image = testingSet.get(i);
 			System.out.println("testImage " + i + " TL: " + image.label);
 			image.printImage();
-			System.out.println("classified as " + classify(image, 1) +
-					"\n---------------------------------\n");
+			System.out.println("classified as " + classify(image, 1) 
+				+ "\n---------------------------------\n");
 		}
 	}
 	

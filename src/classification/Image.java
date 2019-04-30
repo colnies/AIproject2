@@ -137,7 +137,7 @@ public class Image {
 	private static ArrayList<Integer> chooseIndices(int imageSetSize,
 			double percent){
 		int newSize = (int)( (double)imageSetSize * percent);
-		System.out.println("new size: " + newSize);
+		//System.out.println("new size: " + newSize);
 		int index = 0;
 		boolean[] visited = new boolean[imageSetSize];
 		ArrayList<Integer> chosenIndices = new ArrayList<Integer>();
@@ -214,7 +214,11 @@ public class Image {
 		}
 		else
 			images = getDigitImages(true);
-		System.out.println("original size: " + images.size());
+		if (percent < 0)
+			percent = 0;
+		if (percent > 1)
+			percent = 1;
+		//System.out.println("original size: " + images.size());
 		chosenIndices = chooseIndices(images.size(), percent);
 		for (int index: chosenIndices){
 			imagesSubset.add(images.get(index));
