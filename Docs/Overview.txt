@@ -100,7 +100,7 @@ double test(testingSet){
 	return correctCount / testingSet.length 
 }
 
-perceptron(
+
 -------------------------------------------------------
 
 
