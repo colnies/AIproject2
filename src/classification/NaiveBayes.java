@@ -61,6 +61,7 @@ public class NaiveBayes {
 	 * in the training set
 	 */
 	private void initialize(){
+		long start = System.currentTimeMillis();
 		for (Image image: trainingSet){
 			LabelData currentLabel;
 			if (allLabels.contains(new LabelData(image.label) )){
@@ -81,6 +82,7 @@ public class NaiveBayes {
 				}
 			}
 		}
+		System.out.println("Training Time: " + ((System.currentTimeMillis() - start) / 1000F) );
 	}
 	
 	/**

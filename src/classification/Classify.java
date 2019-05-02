@@ -53,9 +53,10 @@ public class Classify {
 			//use other classification algorithm here
 		}
 		*/
-		
-		NaiveBayes nb = new NaiveBayes(true, 0.5);
-		System.out.println("error: " + nb.determineError(1));
+		int k = 1;
+		NaiveBayes nb = new NaiveBayes(false, 1);
+		System.out.println("error: " + nb.determineError(k));
+		//nb.demonstrate(k, 10);
 		
 	}
 

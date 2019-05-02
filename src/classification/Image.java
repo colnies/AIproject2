@@ -152,7 +152,8 @@ public class Image {
 	private static ArrayList<Integer> chooseIndices(int imageSetSize,
 			double percent){
 		int newSize = (int)( (double)imageSetSize * percent);
-		//System.out.println("new size: " + newSize);
+		
+		System.out.println("old size " + imageSetSize +"\nnew size: " + newSize);
 		int index = 0;
 		boolean[] visited = new boolean[imageSetSize];
 		ArrayList<Integer> chosenIndices = new ArrayList<Integer>();
