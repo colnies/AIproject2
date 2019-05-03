@@ -41,6 +41,17 @@ public class Perceptron {
 		initialize();
 	}
 	
+	/**
+	 * creates a Perceptron object and trains it on a percentage of the training set indicated 
+	 * by isFaceType and percent
+	 * @param isFaceType true = working with faces. false = working with digits
+	 * @param percent the percentage of training images you want the machine to "learn" from.
+	 * 0 <= percent <= 1
+	 */
+	public Perceptron(boolean isFaceType, double percent){
+		this(Image.getTrainingImages(isFaceType, percent), Image.getTestingImages(isFaceType));
+	}
+	
 	private void initialize(){
 		
 	}
@@ -62,17 +73,17 @@ public class Perceptron {
 	}
 
 	//returns the label whose weightMatrix generated the highest score for the image
-	private LabelData computeLabel(boolean[][] image){
+	private LabelData computeLabel(Image i){
 		
 		int max = 0;
 		int[][] wm;
-		LabelData computedLabel;
+		LabelData computedLabel = null;
 		
 		for(LabelData ld: allLabels) {
 			
 			//Get each weightMatrix for each label in allLabels, then calculate score//
 			wm= ld.weightMatrix;
-			int score = getScore(image, wm);
+			int score = getScore(i.pixels, wm);
 			
 			//If weightMatrix higher score//
 			if (score > max){	
@@ -123,10 +134,11 @@ public class Perceptron {
 	//iterates through all the training data constantly updating the weightMatrix for 
 	//each label until they are no longer updated or 2 minutes has passed. returns the 
 	//amount of time passed. time passed is used in the report we have to write
-	public int train(ArrayList<Image> trainingSet, percent){
+	public int train(ArrayList<Image> trainingSet, double percent){
 		
-		subSet = getSubSet(percent);
-		hasUpdated = true;
+		int toIndex= trainingSet.size() * (int)percent;
+		ArrayList<Image> subSet = (ArrayList<Image>) trainingSet.subList(0, toIndex);
+		boolean hasUpdated = true;
 		
 		long start = System.currentTimeMillis();
 		long res;
