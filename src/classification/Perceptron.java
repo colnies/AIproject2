@@ -53,41 +53,57 @@ public class Perceptron {
 	}
 	
 	private void initialize(){
-		
+		float time= train(trainingSet);
+		double result= test(testingSet)*100;
+		System.out.println("Training Time: " + time);
+		System.out.println("Testing Accuracy: " + result);
 	}
 	
 	//iterates through all the training data constantly updating the weightMatrix for 
 	//each label until they are no longer updated or 2 minutes has passed. returns the 
 	//amount of time passed. time passed is used in the report we have to write
-	public int train(ArrayList<Image> trainingSet, double percent){
+	public float train(ArrayList<Image> trainingSet){
 		
-		int toIndex= trainingSet.size() * (int)percent;
-		ArrayList<Image> subSet = (ArrayList<Image>) trainingSet.subList(0, toIndex);
 		boolean hasUpdated = true;
 		
-		long start = System.currentTimeMillis();
-		long res;
+		float start = System.currentTimeMillis();
+		float curr;
+		float res;
+		
+		for (Image i: trainingSet){
+			LabelData currentLabel;
+			if (allLabels.contains(new LabelData(i.label) )){
+				currentLabel = getLabelData(i.label);
+			}
+			else {
+				currentLabel = new LabelData(i.label);
+				currentLabel.weightMatrix = new int[i.pixels.length][i.pixels[0].length];
+				allLabels.add(currentLabel);
+			}
 			
-		while (System < 120 || !hasUpdate){
-			hasUpdated = false;
-				for (Image i: subSet) {
-					if (updateWeightMatricies(i, computeLabel(i)) == true)
-						hasUpdated = true;
+			curr= System.currentTimeMillis();
+			while (curr < 120 || !hasUpdated){
+				
+				hasUpdated = false;
+				
+				for (Image image: trainingSet) {
+					if (updateWeightMatricies(image, computeLabel(image)) == true)
+							hasUpdated = true;
 				}
+			res= (System.currentTimeMillis() - curr) / 1000F;
+			}
 		}
-		
 		res= (System.currentTimeMillis() - start) / 1000F;
-		System.out.println("Training Time: " + ((System.currentTimeMillis() - start) / 1000F) );
-		
-	} 
-
+		return res;
+}
+	
 	//returns the accuracy over all the testImages
 	public double test(ArrayList<Image> testingSet){
 		
 		double correctCount=0;
 		
 		for (Image curr: testingSet) {	
-			LabelData labelCurr= computeLabel(curr.pixels);
+			LabelData labelCurr= computeLabel(curr);
 			
 			if (labelCurr.label == curr.label)
 				correctCount++;
@@ -128,7 +144,7 @@ public class Perceptron {
 			//If weightMatrix higher score//
 			if (score > max){	
 				max = score;
-				computedLabel = ld;
+				computedLabel.label=score;
 			}
 		}
 		return computedLabel;
@@ -183,4 +199,14 @@ public class Perceptron {
 			
 		return res;
 	}
+	
+	/**
+	 * easy way to get particular LabelData with just the int label.
+	 * @param label whose data you want
+	 * @return the data corresponding to the label
+	 */
+	public LabelData getLabelData(int label){
+		return allLabels.get(allLabels.indexOf( new LabelData(label) ));
+	}
+	
 }
