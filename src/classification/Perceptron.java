@@ -56,6 +56,46 @@ public class Perceptron {
 		
 	}
 	
+	//iterates through all the training data constantly updating the weightMatrix for 
+	//each label until they are no longer updated or 2 minutes has passed. returns the 
+	//amount of time passed. time passed is used in the report we have to write
+	public int train(ArrayList<Image> trainingSet, double percent){
+		
+		int toIndex= trainingSet.size() * (int)percent;
+		ArrayList<Image> subSet = (ArrayList<Image>) trainingSet.subList(0, toIndex);
+		boolean hasUpdated = true;
+		
+		long start = System.currentTimeMillis();
+		long res;
+			
+		while (System < 120 || !hasUpdate){
+			hasUpdated = false;
+				for (Image i: subSet) {
+					if (updateWeightMatricies(i, computeLabel(i)) == true)
+						hasUpdated = true;
+				}
+		}
+		
+		res= (System.currentTimeMillis() - start) / 1000F;
+		System.out.println("Training Time: " + ((System.currentTimeMillis() - start) / 1000F) );
+		
+	} 
+
+	//returns the accuracy over all the testImages
+	public double test(ArrayList<Image> testingSet){
+		
+		double correctCount=0;
+		
+		for (Image curr: testingSet) {	
+			LabelData labelCurr= computeLabel(curr.pixels);
+			
+			if (labelCurr.label == curr.label)
+				correctCount++;
+		}
+		return correctCount / testingSet.size() ;
+	}
+		
+	
 	//returns the score of the image. the higher the score the more likely
 	//it is classified correctly 
 	private int getScore(boolean[][] image, int[][] weightMatrix){
@@ -130,45 +170,6 @@ public class Perceptron {
 		return true;
 	}
 		
-
-	//iterates through all the training data constantly updating the weightMatrix for 
-	//each label until they are no longer updated or 2 minutes has passed. returns the 
-	//amount of time passed. time passed is used in the report we have to write
-	public int train(ArrayList<Image> trainingSet, double percent){
-		
-		int toIndex= trainingSet.size() * (int)percent;
-		ArrayList<Image> subSet = (ArrayList<Image>) trainingSet.subList(0, toIndex);
-		boolean hasUpdated = true;
-		
-		long start = System.currentTimeMillis();
-		long res;
-		
-		while (System < 120 || !hasUpdate){
-			hasUpdated = false;
-			for (Image i: subSet) {
-				if (updateWeightMatricies(i, computeLabel(i)) == true)
-					hasUpdated = true;
-			}
-		}
-		res= (System.currentTimeMillis() - start) / 1000F;
-		System.out.println("Training Time: " + ((System.currentTimeMillis() - start) / 1000F) );
-		
-	} 
-
-	//returns the accuracy over all the testImages
-	public double test(ArrayList<Image> testingSet){
-		
-		double correctCount=0;
-		
-		for (Image curr: testingSet) {	
-			LabelData labelCurr= computeLabel(curr.pixels);
-			
-			if (labelCurr.label == curr.label)
-				correctCount++;
-		}
-		return correctCount / testingSet.size() ;
-	}
-	
 	/*
 	 * Helper function to convert true to 1; false to 0 for pixel array
 	 */
