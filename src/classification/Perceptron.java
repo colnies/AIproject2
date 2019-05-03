@@ -53,9 +53,9 @@ public class Perceptron {
 	}
 	
 	private void initialize(){
-		float time= train(trainingSet);
-		double result= test(testingSet)*100;
-		System.out.println("Training Time: " + time);
+		float time= train(this.trainingSet);
+		double result= test(this.testingSet)*100;
+		System.out.println("Training Time: " + time + "s");
 		System.out.println("Testing Accuracy: " + result);
 	}
 	
@@ -64,13 +64,16 @@ public class Perceptron {
 	//amount of time passed. time passed is used in the report we have to write
 	public float train(ArrayList<Image> trainingSet){
 		
-		boolean hasUpdated = true;
+		long start = System.currentTimeMillis();
+		long curr=0;
+		long res;
 		
-		float start = System.currentTimeMillis();
-		float curr;
-		float res;
+		//System.out.println("Training set size: " + trainingSet.size());
 		
 		for (Image i: trainingSet){
+			
+			//System.out.println("Image i in training set");
+			
 			LabelData currentLabel;
 			if (allLabels.contains(new LabelData(i.label) )){
 				currentLabel = getLabelData(i.label);
@@ -81,19 +84,27 @@ public class Perceptron {
 				allLabels.add(currentLabel);
 			}
 			
-			curr= System.currentTimeMillis();
-			while (curr < 120 || !hasUpdated){
-				
-				hasUpdated = false;
-				
-				for (Image image: trainingSet) {
-					if (updateWeightMatricies(image, computeLabel(image)) == true)
-							hasUpdated = true;
+			//increment the count for each true feature/pixel in the weightMatrix
+			for (int h = 0; h < i.pixels.length; h++){
+				for (int j = 0; j < i.pixels[0].length; j++){
+					if (i.pixels[h][j] == true){
+						currentLabel.weightMatrix[h][j]++;
+					}
 				}
-			res= (System.currentTimeMillis() - curr) / 1000F;
+			}
+			
+			res=0;
+			curr= System.currentTimeMillis();
+			while (res < 10){
+				
+				if (updateWeightMatricies(i, currentLabel) == true)
+					break;
+				
+			res= (long) ((System.currentTimeMillis()-curr)/1000F)  ;
+			//System.out.println("res: "+ res);
 			}
 		}
-		res= (System.currentTimeMillis() - start) / 1000F;
+		res= (long) ((System.currentTimeMillis() - start) / 1000F);
 		return res;
 }
 	
@@ -125,6 +136,7 @@ public class Perceptron {
 				score += x * weightMatrix[i][j];
 			}
 		}
+		//System.out.println("Score: " + score);
 		return score;
 	}
 
@@ -133,7 +145,7 @@ public class Perceptron {
 		
 		int max = 0;
 		int[][] wm;
-		LabelData computedLabel = null;
+		LabelData computedLabel = allLabels.get(0);
 		
 		for(LabelData ld: allLabels) {
 			
@@ -144,9 +156,10 @@ public class Perceptron {
 			//If weightMatrix higher score//
 			if (score > max){	
 				max = score;
-				computedLabel.label=score;
+				computedLabel=ld;
 			}
 		}
+		//System.out.println("Max score: " + max);
 		return computedLabel;
 	}
 
