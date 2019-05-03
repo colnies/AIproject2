@@ -95,7 +95,7 @@ public class Perceptron {
 			
 			res=0;
 			curr= System.currentTimeMillis();
-			while (res < 10){
+			while (res < 5){
 				
 				if (updateWeightMatricies(i, currentLabel) == true)
 					break;
