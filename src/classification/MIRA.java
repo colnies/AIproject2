@@ -186,6 +186,7 @@ public class MIRA {
 		int[][] wy;
 		
 		int x;
+		double func;
 		double c=4.5;
 		double t;
 		
@@ -197,11 +198,14 @@ public class MIRA {
 				
 				for (int i=0; i<image.length; i++){
 					for (int j=0; j<image[0].length;j++){
-				
-						t= Math.min(c, b);
-				
-				
+						
 						x= pixelConv(image,i,j);
+						
+						//t= min(C, ((w^y'-w^y)f+1)/2||f||22)//
+						
+						func= (((wm[i][j]-wy[i][j])*x)+1)/(2*MIRApixelConv(image));
+								
+						t= Math.min(c, func);
 						
 						wy[i][j] += t*x;
 						wm[i][j] -= t*x;
@@ -223,6 +227,21 @@ public class MIRA {
 		else
 			res=0;
 			
+		return res;
+	}
+	
+	/*
+	 * Helper for MIRA function to sum the square of every element in the image matrix
+	 * Helps to find the matrix norm
+	 */
+	private int MIRApixelConv(boolean[][] image) {
+		int res=0;;
+		
+		for (int i=0; i<image.length; i++){
+			for (int j=0; j<image[0].length;j++){
+				res+= (pixelConv(image,i,j)^2);
+			}
+		}
 		return res;
 	}
 	
