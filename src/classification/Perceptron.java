@@ -30,7 +30,7 @@ public class Perceptron {
 	ArrayList<LabelData> allLabels;
 	
 	/**
-	 * creates a NaiveBayes object and trains it on the given trainingSet
+	 * creates a Perceptron object and trains it on the given trainingSet
 	 * @param trainingSet
 	 * @param testingSet
 	 */
@@ -56,7 +56,7 @@ public class Perceptron {
 		float time= train(this.trainingSet);
 		double result= test(this.testingSet)*100;
 		System.out.println("Training Time: " + time + "s");
-		System.out.println("Testing Accuracy: " + result);
+		System.out.println("Testing Accuracy: " + result + "%");
 	}
 	
 	//iterates through all the training data constantly updating the weightMatrix for 
@@ -112,9 +112,20 @@ public class Perceptron {
 	public double test(ArrayList<Image> testingSet){
 		
 		double correctCount=0;
+		int count=1;
+		int label;
 		
 		for (Image curr: testingSet) {	
+			
+			System.out.println("testImage " + count + " TL: " + curr.label);
+			curr.printImage();
+			
 			LabelData labelCurr= computeLabel(curr);
+			label= labelCurr.label;
+			System.out.println("classified as " + label 
+				+ "\n---------------------------------\n");
+			
+			count++;
 			
 			if (labelCurr.label == curr.label)
 				correctCount++;
@@ -174,11 +185,11 @@ public class Perceptron {
 		boolean[][] image= curr.pixels;
 		int x;
 		
-		//WeightMatrix is updated for 
+		//WeightMatrix is updated for computedLabel
 		for (int i=0; i<image.length; i++){
 			for (int j=0; j<image[0].length;j++){
 				x= pixelConv(image,i,j);
-				wm[i][j] += x;
+				wm[i][j] -= x;
 			}
 		}
 		
@@ -187,12 +198,18 @@ public class Perceptron {
 		//For each other weightMatrix wm//
 		for (LabelData ld: allLabels) {
 			
-			wm= ld.weightMatrix;
+			//if(ld==computedLabel)
+				//continue;
 			
-			for (int i=0; i<image.length; i++){
-				for (int j=0; j<image[0].length;j++){
-					y= pixelConv(image,i,j);
-					wm[i][j] -= y;
+			if(ld.label==curr.label) {
+				
+				wm= ld.weightMatrix;
+			
+				for (int i=0; i<image.length; i++){
+					for (int j=0; j<image[0].length;j++){
+						y= pixelConv(image,i,j);
+						wm[i][j] += y;
+					}
 				}
 			}
 		}
